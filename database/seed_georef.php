@@ -46,17 +46,6 @@ function georefGetJson($url)
     return $data;
 }
 
-function georefProvinciaId($id)
-{
-    return (int) $id;
-}
-
-function georefLocalidadId($id)
-{
-    // No casteamos a int: en algunos entornos puede desbordar y además puede haber ceros a la izquierda.
-    return (string) $id;
-}
-
 $pdo->exec('SET NAMES utf8mb4');
 
 $pdo->exec(
@@ -70,16 +59,16 @@ if (empty($provData['provincias']) || !is_array($provData['provincias'])) {
     exit(1);
 }
 
-$stmtProv = $pdo->prepare(
-    'INSERT INTO provincias (id, nombre, paises_id) VALUES (?, ?, ?)
+$stmtProvIns = $pdo->prepare(
+    'INSERT INTO provincias (nombre, paises_id) VALUES (?, ?)
      ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), paises_id = VALUES(paises_id)'
 );
+$stmtProvId = $pdo->prepare('SELECT id FROM provincias WHERE nombre = ? AND paises_id = ? LIMIT 1');
 
 $pdo->beginTransaction();
 try {
     foreach ($provData['provincias'] as $p) {
-        $stmtProv->execute(array(
-            georefProvinciaId($p['id']),
+        $stmtProvIns->execute(array(
             $p['nombre'],
             $paisId,
         ));
@@ -100,8 +89,8 @@ if ($soloProvincias) {
 
 echo "Descargando localidades (paginado)...\n";
 
-$stmtLoc = $pdo->prepare(
-    'INSERT INTO ciudades (id, nombre, provincias_id) VALUES (?, ?, ?)
+$stmtLocIns = $pdo->prepare(
+    'INSERT INTO ciudades (nombre, provincias_id) VALUES (?, ?)
      ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), provincias_id = VALUES(provincias_id)'
 );
 
@@ -123,13 +112,18 @@ while (true) {
     $pdo->beginTransaction();
     try {
         foreach ($page['localidades'] as $loc) {
-            if (empty($loc['provincia']['id'])) {
+            if (empty($loc['provincia']['nombre'])) {
                 continue;
             }
-            $stmtLoc->execute(array(
-                georefLocalidadId($loc['id']),
+            $provNombre = $loc['provincia']['nombre'];
+            $stmtProvId->execute(array($provNombre, $paisId));
+            $provId = $stmtProvId->fetchColumn();
+            if ($provId === false) {
+                continue;
+            }
+            $stmtLocIns->execute(array(
                 $loc['nombre'],
-                georefProvinciaId($loc['provincia']['id']),
+                (int) $provId,
             ));
         }
         $pdo->commit();

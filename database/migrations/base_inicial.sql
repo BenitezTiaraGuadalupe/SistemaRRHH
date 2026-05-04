@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS `talent_link`.`provincias` (
   `paises_id` INT NOT NULL,
 
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `uq_provincias_nombre_pais` (`nombre`, `paises_id`),
 
   INDEX `fk_provincias_paises1_idx` (`paises_id`),
 
@@ -140,13 +141,14 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `talent_link`.`ciudades` (
 
-  `id` BIGINT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
 
   `nombre` VARCHAR(100) NOT NULL,
 
   `provincias_id` INT NOT NULL,
 
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `uq_ciudades_nombre_prov` (`nombre`, `provincias_id`),
 
   INDEX `fk_ciudades_provincias1_idx` (`provincias_id`),
 
@@ -178,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `talent_link`.`candidatos` (
 
   `fecha_nac` DATETIME NOT NULL,
 
-  `ciudades_id` BIGINT NOT NULL,
+  `ciudades_id` INT NOT NULL,
 
   PRIMARY KEY (`id`),
 
@@ -590,7 +592,7 @@ CREATE TABLE IF NOT EXISTS `talent_link`.`detalle_busquedas` (
 
   `modalidades_id` INT NOT NULL,
 
-  `ciudades_id` BIGINT NULL,
+  `ciudades_id` INT NULL,
 
   `provincias_id` INT NULL,
 
