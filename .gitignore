@@ -1,0 +1,46 @@
+# Composer (por si agregás dependencias)
+/vendor/
+
+# Variables de entorno y secretos (no subir credenciales)
+.env
+.env.*
+!.env.example
+config.php
+
+# Logs y temporales
+*.log
+/logs/
+/tmp/
+/temp/
+/cache/
+*.cache
+
+# PHPUnit
+.phpunit.result.cache
+/phpunit.xml
+coverage/
+clover.xml
+
+# PHPStan / Psalm
+.phpstan/
+phpstan.neon.local
+psalm.xml
+
+# IDEs y editores
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Opcional: archivos de subida local (descomentá si aplica)
+# /uploads/*
+# !/uploads/.gitkeep
