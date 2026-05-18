@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `talent_link`.`usuarios` (
 
   `correo` VARCHAR(100) NOT NULL,
 
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (`id`),
 

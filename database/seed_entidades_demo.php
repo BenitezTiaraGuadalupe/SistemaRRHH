@@ -74,7 +74,8 @@ $pdo->exec(
 );
 $pdo->exec('DELETE FROM usuarios WHERE correo IN (' . $inSql . ')');
 
-$passwordDemo = 'fantasia123';
+$passwordDemoPlano = 'fantasia123';
+$passwordDemo = password_hash($passwordDemoPlano, PASSWORD_DEFAULT);
 
 function obtenerCiudadDemoId(PDO $pdo)
 {
@@ -140,7 +141,7 @@ try {
     }
 
     $pdo->commit();
-    echo "Insertados: 5 empresas, 5 candidatos, 3 personal_rrhh y 13 usuarios (password: {$passwordDemo}).\n";
+    echo "Insertados: 5 empresas, 5 candidatos, 3 personal_rrhh y 13 usuarios (password: {$passwordDemoPlano}).\n";
 } catch (Throwable $e) {
     $pdo->rollBack();
     fwrite(STDERR, 'Error: ' . $e->getMessage() . "\n");

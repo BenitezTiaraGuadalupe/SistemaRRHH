@@ -1,4 +1,19 @@
+<?php
+/**
+ * @var string $titulo
+ * @var array  $solicitudes
+ */
+require_once dirname(__DIR__, 2) . '/lib/flash.php';
+$mensajeExito = flash_get('exito');
+?>
 <h1><?php echo htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'); ?></h1>
+
+<?php if ($mensajeExito !== null) : ?>
+    <div style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:14px;">
+        <?php echo htmlspecialchars($mensajeExito, ENT_QUOTES, 'UTF-8'); ?>
+    </div>
+<?php endif; ?>
+
 <p>Listado de solicitudes. Los datos vendrán de la base de datos más adelante.</p>
 
 <?php if (empty($solicitudes)) : ?>

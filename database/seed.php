@@ -9,6 +9,7 @@
  *
  * Orden:
  *  - seed_roles.php
+ *  - seed_permisos.php (catálogo de permisos + asignación por rol)
  *  - seed_georef.php (provincias + ciudades)
  *  - seed_entidades_demo.php (empresas + candidatos + personal_rrhh + usuarios)
  */
@@ -24,6 +25,7 @@ $root = dirname(__DIR__);
 
 $seeders = array(
     $root . '/database/seed_roles.php',
+    $root . '/database/seed_permisos.php',
 );
 
 if (!$sinGeoref) {
