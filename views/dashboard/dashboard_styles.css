@@ -1,0 +1,56 @@
+/* Panel principal */
+
+.tl-dash-header{
+  margin-bottom: 20px;
+}
+
+.tl-dash-title{
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--tl-brand-700);
+  letter-spacing: -0.2px;
+}
+
+.tl-dash-greeting{
+  margin: 0;
+  font-size: 14px;
+  color: var(--tl-muted-600);
+}
+
+.tl-stats{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.tl-stat-card{
+  background: var(--tl-surface-1);
+  border: 1px solid var(--tl-border-200);
+  border-radius: 12px;
+  padding: 22px 20px;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.05);
+}
+
+.tl-stat-value{
+  margin: 0 0 6px;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--tl-brand-700);
+  letter-spacing: -0.5px;
+}
+
+.tl-stat-label{
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tl-ink-900);
+}
+
+.tl-stat-desc{
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--tl-muted-600);
+}

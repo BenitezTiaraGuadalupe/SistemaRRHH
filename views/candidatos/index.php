@@ -3,7 +3,16 @@
  * @var string $titulo
  * @var array  $candidatos
  */
+require_once dirname(__DIR__, 2) . '/lib/paths.php';
+
+$pageTitle = 'Candidatos — TalentLink';
+$activeMenu = 'candidatos';
+$moduleStylesheets = array(app_module_styles('candidatos'));
 $totalCandidatos = count($candidatos);
+
+include __DIR__ . '/../partials/head.php';
+include __DIR__ . '/../partials/side_bar.php';
+include __DIR__ . '/../partials/navbar.php';
 ?>
 <div class="tl-page">
     <div class="tl-card">
@@ -60,3 +69,4 @@ $totalCandidatos = count($candidatos);
         <?php endif; ?>
     </div>
 </div>
+<?php include __DIR__ . '/../partials/app_close.php'; ?>

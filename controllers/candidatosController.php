@@ -21,16 +21,10 @@ class CandidatosController
         require_once dirname(__DIR__) . '/database.php';
         /** @var PDO $pdo */
 
-        $pageTitle = 'Candidatos — TalentLink';
         $titulo = 'Candidatos';
-        $activeMenu = 'candidatos';
         $candidatos = $this->listarCandidatos($pdo);
 
-        ob_start();
         include $this->viewsPath . '/candidatos/index.php';
-        $content = ob_get_clean();
-
-        include $this->viewsPath . '/layout.php';
     }
 
     private function listarCandidatos(PDO $pdo)

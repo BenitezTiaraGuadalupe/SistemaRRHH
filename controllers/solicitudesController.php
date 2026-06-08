@@ -2,7 +2,6 @@
 
 /**
  * Gestión de solicitudes (ej. vacantes pedidas desde RRHH).
- * PHP plano: incluye vistas y asigna $content antes del layout.
  */
 require_once dirname(__DIR__) . '/lib/auth.php';
 require_once dirname(__DIR__) . '/lib/flash.php';
@@ -20,25 +19,17 @@ class SolicitudesController
     {
         auth_requerir_permiso('solicitudes.ver');
 
-        $pageTitle = 'Solicitudes — TalentLink';
         $titulo = 'Solicitudes';
-        $activeMenu = 'solicitudes';
         $solicitudes = array();
 
-        ob_start();
         include $this->viewsPath . '/solicitudes/index.php';
-        $content = ob_get_clean();
-
-        include $this->viewsPath . '/layout.php';
     }
 
     public function create()
     {
         auth_requerir_permiso('solicitudes.crear');
 
-        $pageTitle = 'Nueva solicitud — TalentLink';
         $titulo = 'Nueva solicitud';
-        $activeMenu = 'solicitudes';
 
         // Datos para los selects del formulario.
         require_once dirname(__DIR__) . '/database.php';
@@ -52,11 +43,7 @@ class SolicitudesController
         $ciudades = $pdo->query('SELECT id, nombre, provincias_id FROM ciudades ORDER BY nombre ASC')->fetchAll();
         $habilidades = $pdo->query('SELECT id, nombre FROM habilidades ORDER BY nombre ASC')->fetchAll();
 
-        ob_start();
         include $this->viewsPath . '/solicitudes/createSolicitudes.php';
-        $content = ob_get_clean();
-
-        include $this->viewsPath . '/layout.php';
     }
 
     public function store()
@@ -152,7 +139,7 @@ class SolicitudesController
         }
 
         flash_set('exito', 'Solicitud registrada correctamente.');
-        header('Location: index.php?accion=index');
+        header('Location: index.php?accion=solicitudes');
         exit;
     }
 

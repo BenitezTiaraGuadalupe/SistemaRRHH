@@ -8,11 +8,12 @@
  */
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/controllers/authController.php';
+require_once __DIR__ . '/controllers/dashboardController.php';
 require_once __DIR__ . '/controllers/solicitudesController.php';
 
 auth_iniciar();
 
-$accion = isset($_GET['accion']) ? (string) $_GET['accion'] : 'index';
+$accion = isset($_GET['accion']) ? (string) $_GET['accion'] : 'dashboard';
 
 $accionesPublicas = array('login');
 
@@ -28,14 +29,20 @@ switch ($accion) {
     case 'logout':
         (new AuthController())->logout();
         break;
+    case 'dashboard':
+        (new DashboardController())->index();
+        break;
+    case 'solicitudes':
+    case 'index':
+        (new SolicitudesController())->index();
+        break;
     case 'create':
         (new SolicitudesController())->create();
         break;
     case 'store':
         (new SolicitudesController())->store();
         break;
-    case 'index':
     default:
-        (new SolicitudesController())->index();
+        (new DashboardController())->index();
         break;
 }

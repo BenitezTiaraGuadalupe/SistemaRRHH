@@ -39,7 +39,7 @@ class AuthController
     private function mostrarLogin()
     {
         if (auth_logueado()) {
-            $this->redirigir('index.php?accion=index');
+            $this->redirigir('index.php?accion=dashboard');
             return;
         }
 
@@ -67,7 +67,7 @@ class AuthController
             return;
         }
 
-        $this->redirigir('index.php?accion=index');
+        $this->redirigir('index.php?accion=dashboard');
     }
 
     private function redirigir($url)

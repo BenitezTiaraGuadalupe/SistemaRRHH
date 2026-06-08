@@ -4,7 +4,15 @@
  * @var array  $solicitudes
  */
 require_once dirname(__DIR__, 2) . '/lib/flash.php';
+require_once dirname(__DIR__, 2) . '/lib/paths.php';
+
+$pageTitle = 'Solicitudes — TalentLink';
+$activeMenu = 'solicitudes';
 $mensajeExito = flash_get('exito');
+
+include __DIR__ . '/../partials/head.php';
+include __DIR__ . '/../partials/side_bar.php';
+include __DIR__ . '/../partials/navbar.php';
 ?>
 <h1><?php echo htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'); ?></h1>
 
@@ -40,3 +48,4 @@ $mensajeExito = flash_get('exito');
         </tbody>
     </table>
 <?php endif; ?>
+<?php include __DIR__ . '/../partials/app_close.php'; ?>

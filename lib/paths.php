@@ -40,3 +40,11 @@ function app_url($path)
 {
     return app_web_base() . '/' . ltrim(str_replace('\\', '/', $path), '/');
 }
+
+/**
+ * Ruta al CSS de un módulo (ej. views/auth/auth_styles.css).
+ */
+function app_module_styles($modulo)
+{
+    return app_url('views/' . $modulo . '/' . $modulo . '_styles.css');
+}
