@@ -12,24 +12,26 @@
  * @var array  $ciudades
  * @var array  $habilidades
  */
-require_once dirname(__DIR__, 2) . '/lib/flash.php';
-
-$asErrores = flash_errors();
+$old = isset($_SESSION['old']) ? $_SESSION['old'] : array();
+$asErrores = isset($_SESSION['errores']) ? $_SESSION['errores'] : array();
+unset($_SESSION['old'], $_SESSION['errores']);
 $asErrorGeneral = isset($asErrores['_general']) ? $asErrores['_general'] : null;
 
-$asOldHabIds = flash_old('habilidades_ids', array());
+$asOldHabIds = isset($old['habilidades_ids']) ? $old['habilidades_ids'] : array();
 if (!is_array($asOldHabIds)) {
     $asOldHabIds = array();
 }
-$asOldHabNuevas = flash_old('habilidades_nuevas', array());
+$asOldHabNuevas = isset($old['habilidades_nuevas']) ? $old['habilidades_nuevas'] : array();
 if (!is_array($asOldHabNuevas)) {
     $asOldHabNuevas = array();
 }
 
-$asHasOldGeo = (flash_old('paises_id', '') !== '' || flash_old('provincias_id', '') !== '' || flash_old('ciudades_id', '') !== '');
-$asOldPais = (int) flash_old('paises_id', 0);
-$asOldProv = (int) flash_old('provincias_id', 0);
-$asOldCiu = (int) flash_old('ciudades_id', 0);
+$asHasOldGeo = ((isset($old['paises_id']) ? $old['paises_id'] : '') !== ''
+    || (isset($old['provincias_id']) ? $old['provincias_id'] : '') !== ''
+    || (isset($old['ciudades_id']) ? $old['ciudades_id'] : '') !== '');
+$asOldPais = (int) (isset($old['paises_id']) ? $old['paises_id'] : 0);
+$asOldProv = (int) (isset($old['provincias_id']) ? $old['provincias_id'] : 0);
+$asOldCiu = (int) (isset($old['ciudades_id']) ? $old['ciudades_id'] : 0);
 
 $asHabilidadesPorId = array();
 foreach ($habilidades as $h) {
@@ -51,6 +53,12 @@ foreach ($asOldHabNuevas as $nombre) {
     $asTechInicial[] = array('id' => null, 'nombre' => $nombre);
 }
 
+function as_old($key, $default = '')
+{
+    global $old;
+    return isset($old[$key]) ? $old[$key] : $default;
+}
+
 function as_clase_error(array $errores, $key)
 {
     return isset($errores[$key]) ? ' as-input-error' : '';
@@ -64,14 +72,25 @@ function as_msg_error(array $errores, $key)
     return '<span class="as-error">' . htmlspecialchars($errores[$key], ENT_QUOTES, 'UTF-8') . '</span>';
 }
 
-require_once dirname(__DIR__, 2) . '/lib/paths.php';
-
 $pageTitle = 'Nueva solicitud — TalentLink';
-$activeMenu = 'solicitudes';
-$moduleStylesheets = array(app_module_styles('solicitudes'));
+$activeMenu = 'solicitud_create';
+$esEmpresa = isset($esEmpresa) ? $esEmpresa : false;
+$empresaUsuario = isset($empresaUsuario) ? $empresaUsuario : null;
 
-include __DIR__ . '/../partials/head.php';
-include __DIR__ . '/../partials/side_bar.php';
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <link rel="stylesheet" href="views/partials/app_styles.css">
+    <link rel="stylesheet" href="views/solicitudes/solicitudes_styles.css">
+</head>
+<body>
+<div class="app">
+<?php
+include __DIR__ . '/../partials/sidebar.php';
 include __DIR__ . '/../partials/navbar.php';
 ?>
 
@@ -95,7 +114,7 @@ include __DIR__ . '/../partials/navbar.php';
             <label for="nombre_puesto">Puesto solicitado</label>
             <input id="nombre_puesto" name="nombre_puesto" type="text"
                    class="<?php echo trim('' . as_clase_error($asErrores, 'nombre_puesto')); ?>"
-                   value="<?php echo htmlspecialchars(flash_old('nombre_puesto', ''), ENT_QUOTES, 'UTF-8'); ?>"
+                   value="<?php echo htmlspecialchars(as_old('nombre_puesto', ''), ENT_QUOTES, 'UTF-8'); ?>"
                    placeholder="Ej: Desarrollador Backend" required>
             <?php echo as_msg_error($asErrores, 'nombre_puesto'); ?>
         </div>
@@ -103,10 +122,16 @@ include __DIR__ . '/../partials/navbar.php';
         <div class="as-row">
             <div class="as-form-group">
                 <label for="empresas_id">Empresa</label>
+                <?php if ($esEmpresa && $empresaUsuario !== null && $empresaUsuario !== false) : ?>
+                    <input type="hidden" name="empresas_id" value="<?php echo (int) $empresaUsuario['id']; ?>">
+                    <input type="text" id="empresas_id" readonly
+                           value="<?php echo htmlspecialchars($empresaUsuario['nombre'], ENT_QUOTES, 'UTF-8'); ?>"
+                           style="background:#f8fafc;cursor:not-allowed;">
+                <?php else : ?>
                 <select id="empresas_id" name="empresas_id" required
                         class="<?php echo trim('' . as_clase_error($asErrores, 'empresas_id')); ?>">
                     <option value="">Seleccione una empresa</option>
-                    <?php $oldEmp = (int) flash_old('empresas_id', 0); ?>
+                    <?php $oldEmp = (int) as_old('empresas_id', 0); ?>
                     <?php foreach ($empresas as $empresa) : ?>
                         <option value="<?php echo (int) $empresa['id']; ?>"
                             <?php echo $oldEmp === (int) $empresa['id'] ? 'selected' : ''; ?>>
@@ -114,6 +139,7 @@ include __DIR__ . '/../partials/navbar.php';
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <?php endif; ?>
                 <?php echo as_msg_error($asErrores, 'empresas_id'); ?>
             </div>
 
@@ -122,7 +148,7 @@ include __DIR__ . '/../partials/navbar.php';
                 <select id="estado_busqueda_id" name="estado_busqueda_id" required
                         class="<?php echo trim('' . as_clase_error($asErrores, 'estado_busqueda_id')); ?>">
                     <option value="">Seleccione un estado</option>
-                    <?php $oldEstado = (int) flash_old('estado_busqueda_id', 0); ?>
+                    <?php $oldEstado = (int) as_old('estado_busqueda_id', 0); ?>
                     <?php foreach ($estadosBusqueda as $estado) : ?>
                         <option value="<?php echo (int) $estado['id']; ?>"
                             <?php echo $oldEstado === (int) $estado['id'] ? 'selected' : ''; ?>>
@@ -139,7 +165,7 @@ include __DIR__ . '/../partials/navbar.php';
                 <label for="cantidad_vacantes">Cantidad de vacantes</label>
                 <input id="cantidad_vacantes" name="cantidad_vacantes" type="number" min="1" required
                        class="<?php echo trim('' . as_clase_error($asErrores, 'cantidad_vacantes')); ?>"
-                       value="<?php echo htmlspecialchars((string) flash_old('cantidad_vacantes', '1'), ENT_QUOTES, 'UTF-8'); ?>">
+                       value="<?php echo htmlspecialchars((string) as_old('cantidad_vacantes', '1'), ENT_QUOTES, 'UTF-8'); ?>">
                 <?php echo as_msg_error($asErrores, 'cantidad_vacantes'); ?>
             </div>
 
@@ -147,7 +173,7 @@ include __DIR__ . '/../partials/navbar.php';
                 <label for="anios_experiencia">Años de experiencia</label>
                 <input id="anios_experiencia" name="anios_experiencia" type="number" min="0" placeholder="Ej: 3"
                        class="<?php echo trim('' . as_clase_error($asErrores, 'anios_experiencia')); ?>"
-                       value="<?php echo htmlspecialchars((string) flash_old('anios_experiencia', ''), ENT_QUOTES, 'UTF-8'); ?>">
+                       value="<?php echo htmlspecialchars((string) as_old('anios_experiencia', ''), ENT_QUOTES, 'UTF-8'); ?>">
                 <?php echo as_msg_error($asErrores, 'anios_experiencia'); ?>
             </div>
         </div>
@@ -175,7 +201,7 @@ include __DIR__ . '/../partials/navbar.php';
             <textarea id="descripcion" name="descripcion" rows="4" maxlength="500"
                       placeholder="Detalle de responsabilidades y requisitos"
                       class="<?php echo trim('' . as_clase_error($asErrores, 'descripcion')); ?>"><?php
-                echo htmlspecialchars((string) flash_old('descripcion', ''), ENT_QUOTES, 'UTF-8');
+                echo htmlspecialchars((string) as_old('descripcion', ''), ENT_QUOTES, 'UTF-8');
             ?></textarea>
             <?php echo as_msg_error($asErrores, 'descripcion'); ?>
         </div>
@@ -185,7 +211,7 @@ include __DIR__ . '/../partials/navbar.php';
             <select id="modalidades_id" name="modalidades_id" required
                     class="<?php echo trim('' . as_clase_error($asErrores, 'modalidades_id')); ?>">
                 <option value="">Seleccione una modalidad</option>
-                <?php $oldMod = (int) flash_old('modalidades_id', 0); ?>
+                <?php $oldMod = (int) as_old('modalidades_id', 0); ?>
                 <?php foreach ($modalidades as $modalidad) : ?>
                     <option value="<?php echo (int) $modalidad['id']; ?>"
                         <?php echo $oldMod === (int) $modalidad['id'] ? 'selected' : ''; ?>>
@@ -427,7 +453,8 @@ include __DIR__ . '/../partials/navbar.php';
     render();
 })();
 </script>
-<?php
-flash_consumir_form();
-include __DIR__ . '/../partials/app_close.php';
-?>
+    </main>
+</div>
+</div>
+</body>
+</html>

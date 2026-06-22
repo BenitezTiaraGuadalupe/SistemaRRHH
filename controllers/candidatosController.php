@@ -3,7 +3,7 @@
 /**
  * Gestión de candidatos.
  */
-require_once dirname(__DIR__) . '/lib/auth.php';
+require_once dirname(__DIR__) . '/controllers/authController.php';
 
 class CandidatosController
 {
@@ -16,7 +16,7 @@ class CandidatosController
 
     public function index()
     {
-        auth_requerir_permiso('candidatos.ver');
+        AuthController::requerirPermiso('candidatos.ver');
 
         require_once dirname(__DIR__) . '/database.php';
         /** @var PDO $pdo */

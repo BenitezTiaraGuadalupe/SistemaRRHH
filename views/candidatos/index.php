@@ -3,15 +3,24 @@
  * @var string $titulo
  * @var array  $candidatos
  */
-require_once dirname(__DIR__, 2) . '/lib/paths.php';
-
 $pageTitle = 'Candidatos — TalentLink';
 $activeMenu = 'candidatos';
-$moduleStylesheets = array(app_module_styles('candidatos'));
 $totalCandidatos = count($candidatos);
 
-include __DIR__ . '/../partials/head.php';
-include __DIR__ . '/../partials/side_bar.php';
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <link rel="stylesheet" href="views/partials/app_styles.css">
+    <link rel="stylesheet" href="views/candidatos/candidatos_styles.css">
+</head>
+<body>
+<div class="app">
+<?php
+include __DIR__ . '/../partials/sidebar.php';
 include __DIR__ . '/../partials/navbar.php';
 ?>
 <div class="tl-page">
@@ -69,4 +78,8 @@ include __DIR__ . '/../partials/navbar.php';
         <?php endif; ?>
     </div>
 </div>
-<?php include __DIR__ . '/../partials/app_close.php'; ?>
+    </main>
+</div>
+</div>
+</body>
+</html>

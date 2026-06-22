@@ -271,3 +271,206 @@
         .as-card .as-tech-input{ grid-template-columns: 1fr auto; }
         .as-card .as-btn-secondary{ display: none; }
     }
+
+/* ============== Listado de solicitudes ============== */
+
+.tl-page{
+    max-width: 1200px;
+}
+
+.tl-card{
+    background: var(--tl-surface-1);
+    border: 1px solid var(--tl-border-200);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+    overflow: hidden;
+}
+
+.tl-card-header{
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--tl-border-200);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.tl-card-title{
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--tl-brand-700);
+    letter-spacing: -0.2px;
+}
+
+.tl-card-subtitle{
+    margin: 0;
+    font-size: 13px;
+    color: var(--tl-muted-600);
+}
+
+.tl-badge{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: var(--tl-brand-700);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.sol-header-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sol-btn-new{
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--tl-brand-700), var(--tl-brand-600));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(31, 60, 136, 0.2);
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.sol-btn-new:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(31, 60, 136, 0.28);
+}
+
+.sol-alert{
+    margin: 16px 22px 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.sol-alert--ok{
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.tl-table-wrap{
+    overflow-x: auto;
+}
+
+.tl-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.tl-table thead{
+    background: #f8fafc;
+}
+
+.tl-table th{
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--tl-muted-600);
+    border-bottom: 1px solid var(--tl-border-200);
+    white-space: nowrap;
+}
+
+.tl-table td{
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--tl-border-200);
+    color: var(--tl-ink-700);
+    vertical-align: middle;
+}
+
+.tl-table tbody tr:last-child td{
+    border-bottom: 0;
+}
+
+.tl-table tbody tr:hover{
+    background: #f8fafc;
+}
+
+.tl-table .tl-cell-name{
+    font-weight: 700;
+    color: var(--tl-ink-900);
+}
+
+.tl-table .tl-cell-muted{
+    color: var(--tl-muted-600);
+    font-size: 13px;
+}
+
+.sol-estado{
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.sol-estado--pendiente{
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.sol-estado--proceso{
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.sol-estado--cerrada{
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.sol-estado--cancelada{
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.sol-estado--default{
+    background: #f1f5f9;
+    color: var(--tl-ink-700);
+}
+
+.tl-empty{
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--tl-muted-600);
+    font-size: 14px;
+}
+
+.tl-empty strong{
+    display: block;
+    margin-bottom: 6px;
+    color: var(--tl-ink-900);
+    font-size: 15px;
+}
+
+.sol-empty-action{
+    margin-top: 16px;
+}
+
+@media (max-width: 768px){
+    .sol-header-actions{
+        width: 100%;
+    }
+    .sol-btn-new{
+        width: 100%;
+        justify-content: center;
+    }
+}

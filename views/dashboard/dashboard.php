@@ -1,28 +1,23 @@
 <?php
 /**
  * @var array $metricas  candidatos, busquedas, ofertas_activas, empresas
+ * @var array|null $usuario
  */
-require_once dirname(__DIR__, 2) . '/lib/paths.php';
-
 $pageTitle = 'Dashboard — TalentLink';
 $activeMenu = 'dashboard';
-$moduleStylesheets = array(app_module_styles('dashboard'));
 
 $nombreUsuario = '';
-if (function_exists('auth_usuario_actual')) {
-    $u = auth_usuario_actual();
-    if ($u !== null) {
-        $partes = array();
-        if (!empty($u['nombre'])) {
-            $partes[] = $u['nombre'];
-        }
-        if (!empty($u['apellido'])) {
-            $partes[] = $u['apellido'];
-        }
-        $nombreUsuario = trim(implode(' ', $partes));
-        if ($nombreUsuario === '') {
-            $nombreUsuario = (string) $u['correo'];
-        }
+if ($usuario !== null) {
+    $partes = array();
+    if (!empty($usuario['nombre'])) {
+        $partes[] = $usuario['nombre'];
+    }
+    if (!empty($usuario['apellido'])) {
+        $partes[] = $usuario['apellido'];
+    }
+    $nombreUsuario = trim(implode(' ', $partes));
+    if ($nombreUsuario === '') {
+        $nombreUsuario = (string) $usuario['correo'];
     }
 }
 
@@ -49,8 +44,20 @@ $tarjetas = array(
     ),
 );
 
-include __DIR__ . '/../partials/head.php';
-include __DIR__ . '/../partials/side_bar.php';
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <link rel="stylesheet" href="views/partials/app_styles.css">
+    <link rel="stylesheet" href="views/dashboard/dashboard_styles.css">
+</head>
+<body>
+<div class="app">
+<?php
+include __DIR__ . '/../partials/sidebar.php';
 include __DIR__ . '/../partials/navbar.php';
 ?>
 <div class="tl-page">
@@ -71,4 +78,8 @@ include __DIR__ . '/../partials/navbar.php';
         <?php endforeach; ?>
     </div>
 </div>
-<?php include __DIR__ . '/../partials/app_close.php'; ?>
+    </main>
+</div>
+</div>
+</body>
+</html>

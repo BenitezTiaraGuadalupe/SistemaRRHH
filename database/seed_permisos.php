@@ -57,7 +57,6 @@ $asignacion = array(
     $rolAdmin => $permisos,
     $rolEmpresa => array(
         'dashboard.ver',
-        'solicitudes.ver',
         'solicitudes.crear',
         'empresas.editar',
         'ofertas.ver',

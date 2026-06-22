@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__DIR__, 2) . '/lib/paths.php';
-
 $pageTitle = isset($pageTitle) ? $pageTitle : 'Iniciar sesión — TalentLink';
 $error = isset($error) ? $error : null;
 ?>
@@ -11,7 +9,7 @@ $error = isset($error) ? $error : null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars(app_module_styles('auth'), ENT_QUOTES, 'UTF-8'); ?>">
+    <link rel="stylesheet" href="views/auth/auth_styles.css">
 </head>
 <body>
 
@@ -19,7 +17,7 @@ $error = isset($error) ? $error : null;
 
     <aside class="lg-side" aria-label="Branding">
         <div class="lg-logo">
-            <img src="<?php echo htmlspecialchars(app_url('public/images/logo.jpg'), ENT_QUOTES, 'UTF-8'); ?>" alt="TalentLink">
+            <img src="public/images/logo.jpg" alt="TalentLink">
         </div>
 
         <div class="lg-side__pitch">

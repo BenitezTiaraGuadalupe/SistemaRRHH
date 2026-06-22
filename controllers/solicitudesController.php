@@ -3,8 +3,7 @@
 /**
  * Gestión de solicitudes (ej. vacantes pedidas desde RRHH).
  */
-require_once dirname(__DIR__) . '/lib/auth.php';
-require_once dirname(__DIR__) . '/lib/flash.php';
+require_once dirname(__DIR__) . '/controllers/authController.php';
 
 class SolicitudesController
 {
@@ -17,25 +16,68 @@ class SolicitudesController
 
     public function index()
     {
-        auth_requerir_permiso('solicitudes.ver');
+        AuthController::requerirPermiso('solicitudes.ver');
 
-        $titulo = 'Solicitudes';
-        $solicitudes = array();
+        require_once dirname(__DIR__) . '/database.php';
+        /** @var PDO $pdo */
+
+        $titulo = 'Solicitudes de personal';
+        $solicitudes = $this->listarSolicitudes($pdo);
 
         include $this->viewsPath . '/solicitudes/index.php';
     }
 
+    private function listarSolicitudes(PDO $pdo)
+    {
+        $sql = 'SELECT b.id,
+                       b.nombre_puesto,
+                       e.nombre AS empresa_nombre,
+                       eb.nombre AS estado_nombre,
+                       db.cantidad_vacantes,
+                       db.anios_experiencia,
+                       m.nombre AS modalidad_nombre,
+                       ci.nombre AS ciudad_nombre,
+                       pr.nombre AS provincia_nombre,
+                       pa.nombre AS pais_nombre
+                FROM busquedas b
+                INNER JOIN empresas e ON e.id = b.empresas_id
+                INNER JOIN estado_busqueda eb ON eb.id = b.estado_busqueda_id
+                LEFT JOIN detalle_busquedas db ON db.busquedas_id = b.id
+                LEFT JOIN modalidades m ON m.id = db.modalidades_id
+                LEFT JOIN ciudades ci ON ci.id = db.ciudades_id
+                LEFT JOIN provincias pr ON pr.id = db.provincias_id
+                LEFT JOIN paises pa ON pa.id = db.paises_id
+                ORDER BY b.id DESC';
+
+        return $pdo->query($sql)->fetchAll();
+    }
+
     public function create()
     {
-        auth_requerir_permiso('solicitudes.crear');
+        AuthController::requerirPermiso('solicitudes.crear');
 
-        $titulo = 'Nueva solicitud';
-
-        // Datos para los selects del formulario.
         require_once dirname(__DIR__) . '/database.php';
         /** @var PDO $pdo */
 
-        $empresas = $pdo->query('SELECT id, nombre FROM empresas ORDER BY nombre ASC')->fetchAll();
+        $titulo = 'Nueva solicitud';
+        $esEmpresa = AuthController::esRol('empresa');
+        $empresaUsuario = null;
+
+        if ($esEmpresa) {
+            $empresaId = AuthController::empresaDelUsuario($pdo);
+            if ($empresaId === null) {
+                http_response_code(403);
+                echo 'Su cuenta de empresa no está vinculada a una organización.';
+                exit;
+            }
+            $stmt = $pdo->prepare('SELECT id, nombre FROM empresas WHERE id = ? LIMIT 1');
+            $stmt->execute(array($empresaId));
+            $empresaUsuario = $stmt->fetch();
+            $empresas = $empresaUsuario !== false ? array($empresaUsuario) : array();
+        } else {
+            $empresas = $pdo->query('SELECT id, nombre FROM empresas ORDER BY nombre ASC')->fetchAll();
+        }
+
         $estadosBusqueda = $pdo->query('SELECT id, nombre FROM estado_busqueda ORDER BY nombre ASC')->fetchAll();
         $modalidades = $pdo->query('SELECT id, nombre FROM modalidades ORDER BY nombre ASC')->fetchAll();
         $paises = $pdo->query('SELECT id, nombre FROM paises ORDER BY nombre ASC')->fetchAll();
@@ -48,7 +90,7 @@ class SolicitudesController
 
     public function store()
     {
-        auth_requerir_permiso('solicitudes.crear');
+        AuthController::requerirPermiso('solicitudes.crear');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?accion=create');
@@ -59,11 +101,12 @@ class SolicitudesController
         /** @var PDO $pdo */
 
         $datos = $this->extraerDatosPost();
+        $datos = $this->aplicarRestriccionEmpresa($pdo, $datos);
         $errores = $this->validar($datos);
 
         if (!empty($errores)) {
-            flash_set('errors', $errores);
-            flash_set('old', $datos['old']);
+            $_SESSION['errores'] = $errores;
+            $_SESSION['old'] = $datos['old'];
             header('Location: index.php?accion=create');
             exit;
         }
@@ -132,15 +175,37 @@ class SolicitudesController
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            flash_set('errors', array('_general' => 'No se pudo registrar la solicitud. Intentá nuevamente.'));
-            flash_set('old', $datos['old']);
+            $_SESSION['errores'] = array('_general' => 'No se pudo registrar la solicitud. Intentá nuevamente.');
+            $_SESSION['old'] = $datos['old'];
             header('Location: index.php?accion=create');
             exit;
         }
 
-        flash_set('exito', 'Solicitud registrada correctamente.');
-        header('Location: index.php?accion=solicitudes');
+        $_SESSION['mensaje_exito'] = 'Solicitud registrada correctamente.';
+        if (AuthController::tienePermiso('solicitudes.ver')) {
+            header('Location: index.php?accion=solicitudes');
+        } else {
+            header('Location: index.php?accion=dashboard');
+        }
         exit;
+    }
+
+    /**
+     * Si el usuario es empresa, fuerza empresas_id a su propia organización.
+     */
+    private function aplicarRestriccionEmpresa(PDO $pdo, array $datos)
+    {
+        if (!AuthController::esRol('empresa')) {
+            return $datos;
+        }
+
+        $empresaId = AuthController::empresaDelUsuario($pdo);
+        if ($empresaId !== null) {
+            $datos['empresas_id'] = $empresaId;
+            $datos['old']['empresas_id'] = $empresaId;
+        }
+
+        return $datos;
     }
 
     private function extraerDatosPost()

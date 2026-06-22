@@ -15,7 +15,6 @@ Pasos para levantar el proyecto en local
 6- Ejecutar seeders en orden (roles → georef → entidades demo)
 
     php database/seed.php
-
 Notas:
 - Si querés correr solo roles: `php database/seed_roles.php`
 - Si querés correr solo georef (provincias + ciudades): `php database/seed_georef.php`
