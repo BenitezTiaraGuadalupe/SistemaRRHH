@@ -8,6 +8,7 @@ require_once __DIR__ . '/controllers/dashboardController.php';
 require_once __DIR__ . '/controllers/solicitudesController.php';
 require_once __DIR__ . '/controllers/usuariosController.php';
 require_once __DIR__ . '/controllers/candidatosController.php';
+require_once __DIR__ . '/controllers/ofertasController.php';
 
 AuthController::iniciarSesion();
 
@@ -63,6 +64,21 @@ switch ($accion) {
         break;
     case 'roles_update':
         (new UsuariosController())->rolesUpdate();
+        break;
+    case 'ofertas':
+        (new OfertasController())->index();
+        break;
+    case 'ofertas_create':
+        (new OfertasController())->create();
+        break;
+    case 'ofertas_store':
+        (new OfertasController())->store();
+        break;
+    case 'ofertas_edit':
+        (new OfertasController())->edit();
+        break;
+    case 'ofertas_update':
+        (new OfertasController())->update();
         break;
     default:
         (new DashboardController())->index();

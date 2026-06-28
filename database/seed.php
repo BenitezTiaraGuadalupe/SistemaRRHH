@@ -12,6 +12,7 @@
  *  - seed_permisos.php (catálogo de permisos + asignación por rol)
  *  - seed_georef.php (provincias + ciudades)
  *  - seed_entidades_demo.php (empresas + candidatos + personal_rrhh + usuarios)
+ *  - seed_catalogos.php (estados, modalidades, etapas + búsquedas demo)
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -33,6 +34,7 @@ if (!$sinGeoref) {
 }
 
 $seeders[] = $root . '/database/seed_entidades_demo.php';
+$seeders[] = $root . '/database/seed_catalogos.php';
 
 foreach ($seeders as $file) {
     if (!file_exists($file)) {

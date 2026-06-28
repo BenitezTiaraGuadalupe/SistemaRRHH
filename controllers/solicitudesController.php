@@ -38,7 +38,9 @@ class SolicitudesController
                        m.nombre AS modalidad_nombre,
                        ci.nombre AS ciudad_nombre,
                        pr.nombre AS provincia_nombre,
-                       pa.nombre AS pais_nombre
+                       pa.nombre AS pais_nombre,
+                       o.id AS oferta_id,
+                       eo.nombre AS oferta_estado_nombre
                 FROM busquedas b
                 INNER JOIN empresas e ON e.id = b.empresas_id
                 INNER JOIN estado_busqueda eb ON eb.id = b.estado_busqueda_id
@@ -47,6 +49,8 @@ class SolicitudesController
                 LEFT JOIN ciudades ci ON ci.id = db.ciudades_id
                 LEFT JOIN provincias pr ON pr.id = db.provincias_id
                 LEFT JOIN paises pa ON pa.id = db.paises_id
+                LEFT JOIN ofertas o ON o.busquedas_id = b.id
+                LEFT JOIN estado_ofertas eo ON eo.id = o.estado_ofertas_id
                 ORDER BY b.id DESC';
 
         return $pdo->query($sql)->fetchAll();

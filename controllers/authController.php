@@ -240,4 +240,16 @@ class AuthController
         $id = $stmt->fetchColumn();
         return $id === false ? null : (int) $id;
     }
+
+    public static function personalRrhhDelUsuario(PDO $pdo)
+    {
+        $u = self::usuario();
+        if ($u === null) {
+            return null;
+        }
+        $stmt = $pdo->prepare('SELECT id FROM personal_rrhh WHERE usuarios_id = ? LIMIT 1');
+        $stmt->execute(array((int) $u['id']));
+        $id = $stmt->fetchColumn();
+        return $id === false ? null : (int) $id;
+    }
 }

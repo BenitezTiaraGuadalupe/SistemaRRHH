@@ -465,6 +465,42 @@
     margin-top: 16px;
 }
 
+.sol-acciones{
+    white-space: nowrap;
+}
+
+.sol-accion-link{
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2a4aa3;
+    text-decoration: none;
+}
+
+.sol-accion-link:hover{
+    text-decoration: underline;
+}
+
+.sol-accion-link--primary{
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #1f3c88;
+    color: #fff;
+    text-decoration: none;
+}
+
+.sol-accion-link--primary:hover{
+    background: #2a4aa3;
+    text-decoration: none;
+}
+
+.sol-accion-hint{
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+}
+
 @media (max-width: 768px){
     .sol-header-actions{
         width: 100%;

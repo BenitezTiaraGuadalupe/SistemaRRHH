@@ -63,6 +63,52 @@ foreach ($correos as $c) {
 }
 $inSql = implode(',', $inList);
 
+// Búsquedas/ofertas/postulaciones de empresas demo (evita error FK al re-ejecutar seed)
+$pdo->exec(
+    'DELETE ppc FROM postulaciones_por_candidatos ppc
+     INNER JOIN postulaciones p ON p.id = ppc.postulaciones_id
+     INNER JOIN ofertas o ON o.id = p.ofertas_id
+     INNER JOIN busquedas b ON b.id = o.busquedas_id
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+$pdo->exec(
+    'DELETE p FROM postulaciones p
+     INNER JOIN ofertas o ON o.id = p.ofertas_id
+     INNER JOIN busquedas b ON b.id = o.busquedas_id
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+$pdo->exec(
+    'DELETE o FROM ofertas o
+     INNER JOIN busquedas b ON b.id = o.busquedas_id
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+$pdo->exec(
+    'DELETE hpb FROM habilidades_por_busqueda hpb
+     INNER JOIN busquedas b ON b.id = hpb.busquedas_id
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+$pdo->exec(
+    'DELETE db FROM detalle_busquedas db
+     INNER JOIN busquedas b ON b.id = db.busquedas_id
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+$pdo->exec(
+    'DELETE b FROM busquedas b
+     INNER JOIN empresas e ON e.id = b.empresas_id
+     INNER JOIN usuarios u ON u.id = e.usuarios_id
+     WHERE u.correo IN (' . $inSql . ')'
+);
+
 $pdo->exec(
     'DELETE c FROM candidatos c INNER JOIN usuarios u ON c.usuarios_id = u.id WHERE u.correo IN (' . $inSql . ')'
 );

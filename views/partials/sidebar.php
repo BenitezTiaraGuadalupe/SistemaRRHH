@@ -29,7 +29,7 @@ $itemsPrincipal = array(
     array(
         'key' => 'ofertas',
         'label' => 'Ofertas laborales',
-        'href' => '#',
+        'href' => 'index.php?accion=ofertas',
         'permiso' => 'ofertas.ver',
     ),
     array(

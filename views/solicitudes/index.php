@@ -8,9 +8,12 @@ require_once dirname(__DIR__, 2) . '/controllers/authController.php';
 $pageTitle = 'Solicitudes — TalentLink';
 $activeMenu = 'solicitudes';
 $mensajeExito = isset($_SESSION['mensaje_exito']) ? $_SESSION['mensaje_exito'] : null;
-unset($_SESSION['mensaje_exito']);
+$errores = isset($_SESSION['errores']) ? $_SESSION['errores'] : array();
+unset($_SESSION['mensaje_exito'], $_SESSION['errores']);
+$errorGeneral = isset($errores['_general']) ? $errores['_general'] : null;
 $totalSolicitudes = count($solicitudes);
 $puedeCrear = AuthController::tienePermiso('solicitudes.crear');
+$puedeGestionarOfertas = AuthController::tienePermiso('ofertas.crear');
 
 function sol_formatear_ubicacion(array $s)
 {
@@ -84,6 +87,17 @@ include __DIR__ . '/../partials/navbar.php';
             </div>
         <?php endif; ?>
 
+        <?php if ($errorGeneral !== null) : ?>
+            <div class="sol-alert sol-alert--error" role="alert">
+                <?php echo htmlspecialchars($errorGeneral, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($errores['busquedas_id'])) : ?>
+            <div class="sol-alert sol-alert--error" role="alert">
+                <?php echo htmlspecialchars($errores['busquedas_id'], ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
+
         <?php if (empty($solicitudes)) : ?>
             <div class="tl-empty">
                 <strong>No hay solicitudes cargadas</strong>
@@ -106,6 +120,9 @@ include __DIR__ . '/../partials/navbar.php';
                             <th>Modalidad</th>
                             <th>Ubicación</th>
                             <th>Estado</th>
+                            <?php if ($puedeGestionarOfertas) : ?>
+                                <th>Acciones</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -141,6 +158,24 @@ include __DIR__ . '/../partials/navbar.php';
                                         —
                                     <?php endif; ?>
                                 </td>
+                                <?php if ($puedeGestionarOfertas) : ?>
+                                    <td class="sol-acciones">
+                                        <?php if (!empty($solicitud['oferta_id'])) : ?>
+                                            <a class="sol-accion-link"
+                                               href="index.php?accion=ofertas_edit&amp;id=<?php echo (int) $solicitud['oferta_id']; ?>&amp;desde=solicitudes">
+                                                Editar oferta
+                                            </a>
+                                            <?php if (!empty($solicitud['oferta_estado_nombre'])) : ?>
+                                                <span class="sol-accion-hint"><?php echo htmlspecialchars($solicitud['oferta_estado_nombre'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                            <?php endif; ?>
+                                        <?php else : ?>
+                                            <a class="sol-accion-link sol-accion-link--primary"
+                                               href="index.php?accion=ofertas_create&amp;busquedas_id=<?php echo (int) $solicitud['id']; ?>&amp;desde=solicitudes">
+                                                Publicar oferta
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
+                                <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
