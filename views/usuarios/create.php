@@ -120,14 +120,14 @@ include __DIR__ . '/../partials/navbar.php';
 
             <div id="campos-candidato-extra" class="usu-perfil-campos">
                 <div class="usu-form-group">
-                    <label for="fecha_nac">Fecha de nacimiento</label>
+                    <label for="fecha_nac">Fecha de nacimiento <span class="usu-optional">(opcional)</span></label>
                     <input type="date" id="fecha_nac" name="fecha_nac"
                            value="<?php echo htmlspecialchars((string) usu_old('fecha_nac'), ENT_QUOTES, 'UTF-8'); ?>"
                            class="<?php echo trim(usu_err($errores, 'fecha_nac')); ?>">
                     <?php echo usu_msg($errores, 'fecha_nac'); ?>
                 </div>
                 <div class="usu-form-group">
-                    <label for="ciudades_id">Ciudad</label>
+                    <label for="ciudades_id">Ciudad <span class="usu-optional">(opcional)</span></label>
                     <select id="ciudades_id" name="ciudades_id" class="<?php echo trim(usu_err($errores, 'ciudades_id')); ?>">
                         <option value="">Seleccionar...</option>
                         <?php $oldCiu = (int) usu_old('ciudades_id', 0); ?>

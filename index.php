@@ -9,6 +9,7 @@ require_once __DIR__ . '/controllers/solicitudesController.php';
 require_once __DIR__ . '/controllers/usuariosController.php';
 require_once __DIR__ . '/controllers/candidatosController.php';
 require_once __DIR__ . '/controllers/ofertasController.php';
+require_once __DIR__ . '/controllers/postulacionesController.php';
 
 AuthController::iniciarSesion();
 
@@ -18,7 +19,14 @@ if (AuthController::estaLogueado()) {
     AuthController::refrescarPermisos($pdo);
 }
 
-$accion = isset($_GET['accion']) ? (string) $_GET['accion'] : 'dashboard';
+$accion = isset($_GET['accion']) ? trim((string) $_GET['accion']) : '';
+if ($accion === '') {
+    if (AuthController::estaLogueado()) {
+        header('Location: ' . AuthController::urlInicio());
+        exit;
+    }
+    $accion = 'login';
+}
 
 if ($accion !== 'login' && !AuthController::estaLogueado()) {
     header('Location: index.php?accion=login');
@@ -79,6 +87,9 @@ switch ($accion) {
         break;
     case 'ofertas_update':
         (new OfertasController())->update();
+        break;
+    case 'postulaciones_store':
+        (new PostulacionesController())->store();
         break;
     default:
         (new DashboardController())->index();

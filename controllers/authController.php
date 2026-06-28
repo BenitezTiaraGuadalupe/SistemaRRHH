@@ -33,7 +33,7 @@ class AuthController
     private function mostrarLogin()
     {
         if (self::estaLogueado()) {
-            header('Location: index.php?accion=dashboard');
+            header('Location: ' . self::urlInicio());
             exit;
         }
 
@@ -61,7 +61,7 @@ class AuthController
             exit;
         }
 
-        header('Location: index.php?accion=dashboard');
+        header('Location: ' . self::urlInicio());
         exit;
     }
 
@@ -119,6 +119,20 @@ class AuthController
             return false;
         }
         return strcasecmp((string) $u['rol_nombre'], (string) $nombre) === 0;
+    }
+
+    /**
+     * URL de inicio según el rol del usuario logueado.
+     */
+    public static function urlInicio()
+    {
+        if (self::esRol('candidato')) {
+            return 'index.php?accion=ofertas';
+        }
+        if (self::esRol('empresa')) {
+            return 'index.php?accion=create';
+        }
+        return 'index.php?accion=dashboard';
     }
 
     public static function requerirLogin()
@@ -248,6 +262,18 @@ class AuthController
             return null;
         }
         $stmt = $pdo->prepare('SELECT id FROM personal_rrhh WHERE usuarios_id = ? LIMIT 1');
+        $stmt->execute(array((int) $u['id']));
+        $id = $stmt->fetchColumn();
+        return $id === false ? null : (int) $id;
+    }
+
+    public static function candidatoDelUsuario(PDO $pdo)
+    {
+        $u = self::usuario();
+        if ($u === null) {
+            return null;
+        }
+        $stmt = $pdo->prepare('SELECT id FROM candidatos WHERE usuarios_id = ? LIMIT 1');
         $stmt->execute(array((int) $u['id']));
         $id = $stmt->fetchColumn();
         return $id === false ? null : (int) $id;

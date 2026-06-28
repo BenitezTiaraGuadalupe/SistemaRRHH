@@ -16,7 +16,10 @@ class DashboardController
 
     public function index()
     {
-        AuthController::requerirPermiso('dashboard.ver');
+        if (!AuthController::esRol('admin')) {
+            header('Location: ' . AuthController::urlInicio());
+            exit;
+        }
 
         require_once dirname(__DIR__) . '/database.php';
         $pdo = $GLOBALS['pdo'];

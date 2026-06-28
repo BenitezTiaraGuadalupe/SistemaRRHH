@@ -21,10 +21,17 @@ class OfertasController
         require_once dirname(__DIR__) . '/database.php';
         $pdo = $GLOBALS['pdo'];
 
-        $titulo = 'Ofertas laborales';
-        $ofertas = $this->listarOfertas($pdo);
+        $esCandidato = AuthController::esRol('candidato');
+        $titulo = $esCandidato ? 'Ofertas disponibles' : 'Ofertas laborales';
         $puedeGestionar = AuthController::tienePermiso('ofertas.crear');
 
+        if ($esCandidato) {
+            $ofertas = $this->listarOfertasFeed($pdo);
+            include $this->viewsPath . '/ofertas/feed.php';
+            return;
+        }
+
+        $ofertas = $this->listarOfertas($pdo);
         include $this->viewsPath . '/ofertas/index.php';
     }
 
@@ -209,6 +216,61 @@ class OfertasController
         }
 
         $sql .= ' ORDER BY o.id DESC';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    private function listarOfertasFeed(PDO $pdo)
+    {
+        $candidatoId = AuthController::candidatoDelUsuario($pdo);
+
+        $sql = 'SELECT o.id,
+                       b.id AS busqueda_id,
+                       b.nombre_puesto,
+                       e.nombre AS empresa_nombre,
+                       db.descripcion,
+                       db.cantidad_vacantes,
+                       db.anios_experiencia,
+                       m.nombre AS modalidad_nombre,
+                       ci.nombre AS ciudad_nombre,
+                       pr.nombre AS provincia_nombre,
+                       pa.nombre AS pais_nombre,
+                       (SELECT GROUP_CONCAT(h.nombre ORDER BY h.nombre SEPARATOR \', \')
+                        FROM habilidades_por_busqueda hpb
+                        INNER JOIN habilidades h ON h.id = hpb.habilidades_id
+                        WHERE hpb.busquedas_id = b.id) AS habilidades_nombres';
+
+        if ($candidatoId !== null) {
+            $sql .= ',
+                       CASE WHEN EXISTS (
+                           SELECT 1 FROM postulaciones po
+                           INNER JOIN postulaciones_por_candidatos ppc ON ppc.postulaciones_id = po.id
+                           WHERE po.ofertas_id = o.id AND ppc.candidatos_id = ?
+                       ) THEN 1 ELSE 0 END AS ya_postulado';
+        } else {
+            $sql .= ', 0 AS ya_postulado';
+        }
+
+        $sql .= '
+                FROM ofertas o
+                INNER JOIN busquedas b ON b.id = o.busquedas_id
+                INNER JOIN empresas e ON e.id = b.empresas_id
+                INNER JOIN estado_ofertas eo ON eo.id = o.estado_ofertas_id
+                LEFT JOIN detalle_busquedas db ON db.busquedas_id = b.id
+                LEFT JOIN modalidades m ON m.id = db.modalidades_id
+                LEFT JOIN ciudades ci ON ci.id = db.ciudades_id
+                LEFT JOIN provincias pr ON pr.id = db.provincias_id
+                LEFT JOIN paises pa ON pa.id = db.paises_id
+                WHERE LOWER(eo.nombre) LIKE ?
+                ORDER BY o.id DESC';
+
+        $params = array();
+        if ($candidatoId !== null) {
+            $params[] = $candidatoId;
+        }
+        $params[] = '%activ%';
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);

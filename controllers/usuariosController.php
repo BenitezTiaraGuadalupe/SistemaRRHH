@@ -388,14 +388,6 @@ class UsuariosController
                 $errs['empresa_nombre'] = 'El nombre de la empresa es obligatorio.';
             }
         }
-        if ($rolKey === 'candidato') {
-            if ($d['fecha_nac'] === '') {
-                $errs['fecha_nac'] = 'La fecha de nacimiento es obligatoria.';
-            }
-            if ($d['ciudades_id'] <= 0) {
-                $errs['ciudades_id'] = 'Seleccioná una ciudad.';
-            }
-        }
 
         return $errs;
     }
@@ -425,7 +417,8 @@ class UsuariosController
         }
 
         if ($rolNombre === 'candidato') {
-            $fecha = $d['fecha_nac'] . ' 00:00:00';
+            $fecha = $d['fecha_nac'] !== '' ? $d['fecha_nac'] . ' 00:00:00' : null;
+            $ciudadId = $d['ciudades_id'] > 0 ? $d['ciudades_id'] : null;
             $ins = $pdo->prepare(
                 'INSERT INTO candidatos (usuarios_id, nombre, apellido, fecha_nac, ciudades_id) VALUES (?, ?, ?, ?, ?)'
             );
@@ -434,7 +427,7 @@ class UsuariosController
                 $d['nombre'],
                 $d['apellido'],
                 $fecha,
-                $d['ciudades_id'],
+                $ciudadId,
             ));
         }
     }

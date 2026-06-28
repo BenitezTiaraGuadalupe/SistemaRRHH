@@ -56,14 +56,12 @@ $permisos = array(
 $asignacion = array(
     $rolAdmin => $permisos,
     $rolEmpresa => array(
-        'dashboard.ver',
         'solicitudes.crear',
         'empresas.editar',
         'ofertas.ver',
         'postulaciones.ver',
     ),
     $rolCandidato => array(
-        'dashboard.ver',
         'candidatos.editar',
         'ofertas.ver',
         'postulaciones.ver',
