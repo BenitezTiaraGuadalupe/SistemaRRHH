@@ -13,6 +13,7 @@ AuthController::iniciarSesion();
 
 if (AuthController::estaLogueado()) {
     require_once __DIR__ . '/database.php';
+    $pdo = $GLOBALS['pdo'];
     AuthController::refrescarPermisos($pdo);
 }
 

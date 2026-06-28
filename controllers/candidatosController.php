@@ -19,7 +19,7 @@ class CandidatosController
         AuthController::requerirPermiso('candidatos.ver');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Candidatos';
         $candidatos = $this->listarCandidatos($pdo);

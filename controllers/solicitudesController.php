@@ -19,7 +19,7 @@ class SolicitudesController
         AuthController::requerirPermiso('solicitudes.ver');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Solicitudes de personal';
         $solicitudes = $this->listarSolicitudes($pdo);
@@ -57,7 +57,7 @@ class SolicitudesController
         AuthController::requerirPermiso('solicitudes.crear');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Nueva solicitud';
         $esEmpresa = AuthController::esRol('empresa');
@@ -98,7 +98,7 @@ class SolicitudesController
         }
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $datos = $this->extraerDatosPost();
         $datos = $this->aplicarRestriccionEmpresa($pdo, $datos);

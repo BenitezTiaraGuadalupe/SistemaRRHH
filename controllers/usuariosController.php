@@ -19,7 +19,7 @@ class UsuariosController
         $this->requerirAdmin('usuarios.ver');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Usuarios del sistema';
         $usuarios = $this->listarUsuarios($pdo);
@@ -33,7 +33,7 @@ class UsuariosController
         $this->requerirAdmin('usuarios.administrar');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Nuevo usuario';
         $roles = $pdo->query('SELECT id, nombre FROM roles ORDER BY id ASC')->fetchAll();
@@ -58,7 +58,7 @@ class UsuariosController
         }
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $datos = $this->extraerDatosPost();
         $errores = $this->validarAlta($pdo, $datos);
@@ -103,7 +103,7 @@ class UsuariosController
         $this->requerirAdmin('usuarios.ver');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $titulo = 'Roles y permisos';
         $roles = $this->listarRolesConPermisos($pdo);
@@ -123,7 +123,7 @@ class UsuariosController
         }
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $rol = $this->obtenerRol($pdo, $rolId);
         if ($rol === null) {
@@ -155,7 +155,7 @@ class UsuariosController
         }
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $rol = $this->obtenerRol($pdo, $rolId);
         if ($rol === null) {

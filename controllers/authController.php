@@ -7,6 +7,8 @@ class AuthController
 {
     private $viewsPath;
 
+    // Constructor del controlador
+    // Define la ruta de las vistas
     public function __construct()
     {
         $this->viewsPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views';
@@ -52,7 +54,7 @@ class AuthController
         }
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         if (!self::login($pdo, $correo, $password)) {
             header('Location: index.php?accion=login&error=credenciales');

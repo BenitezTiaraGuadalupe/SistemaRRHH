@@ -19,7 +19,7 @@ class DashboardController
         AuthController::requerirPermiso('dashboard.ver');
 
         require_once dirname(__DIR__) . '/database.php';
-        /** @var PDO $pdo */
+        $pdo = $GLOBALS['pdo'];
 
         $metricas = $this->obtenerMetricas($pdo);
         $usuario = AuthController::usuario();
