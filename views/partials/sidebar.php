@@ -41,7 +41,7 @@ $itemsPrincipal = array(
     array(
         'key' => 'postulaciones',
         'label' => 'Postulaciones',
-        'href' => '#',
+        'href' => 'index.php?accion=postulaciones',
         'permiso' => 'postulaciones.ver',
     ),
     array(
@@ -85,6 +85,9 @@ $itemsReportes = array(
             $etiqueta = $item['label'];
             if ($item['key'] === 'ofertas' && AuthController::esRol('candidato')) {
                 $etiqueta = 'Ofertas disponibles';
+            }
+            if ($item['key'] === 'postulaciones' && AuthController::esRol('candidato')) {
+                $etiqueta = 'Mis postulaciones';
             }
             ?>
             <a class="<?php echo $claseActiva; ?>" href="<?php echo htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8'); ?>">

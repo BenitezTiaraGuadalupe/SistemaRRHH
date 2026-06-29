@@ -7,6 +7,39 @@ require_once dirname(__DIR__) . '/controllers/authController.php';
 
 class PostulacionesController
 {
+    private $viewsPath;
+
+    public function __construct()
+    {
+        $this->viewsPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views';
+    }
+
+    public function index()
+    {
+        AuthController::requerirPermiso('postulaciones.ver');
+
+        if (!AuthController::esRol('candidato')) {
+            http_response_code(403);
+            echo 'Esta sección está disponible solo para candidatos.';
+            exit;
+        }
+
+        require_once dirname(__DIR__) . '/database.php';
+        $pdo = $GLOBALS['pdo'];
+
+        $candidatoId = AuthController::candidatoDelUsuario($pdo);
+        if ($candidatoId === null) {
+            http_response_code(403);
+            echo 'Su cuenta no está vinculada a un perfil de candidato.';
+            exit;
+        }
+
+        $titulo = 'Mis postulaciones';
+        $postulaciones = $this->listarPorCandidato($pdo, $candidatoId);
+
+        include $this->viewsPath . '/postulaciones/index.php';
+    }
+
     public function store()
     {
         AuthController::requerirPermiso('postulaciones.crear');
@@ -76,8 +109,33 @@ class PostulacionesController
         }
 
         $_SESSION['mensaje_exito'] = 'Postulación enviada correctamente.';
-        header('Location: index.php?accion=ofertas');
+        header('Location: index.php?accion=postulaciones');
         exit;
+    }
+
+    private function listarPorCandidato(PDO $pdo, $candidatoId)
+    {
+        $sql = 'SELECT p.id,
+                       et.nombre AS etapa_nombre,
+                       b.nombre_puesto,
+                       e.nombre AS empresa_nombre,
+                       eo.nombre AS oferta_estado_nombre,
+                       m.nombre AS modalidad_nombre
+                FROM postulaciones p
+                INNER JOIN postulaciones_por_candidatos ppc ON ppc.postulaciones_id = p.id
+                INNER JOIN etapas et ON et.id = p.etapas_id
+                INNER JOIN ofertas o ON o.id = p.ofertas_id
+                INNER JOIN busquedas b ON b.id = o.busquedas_id
+                INNER JOIN empresas e ON e.id = b.empresas_id
+                INNER JOIN estado_ofertas eo ON eo.id = o.estado_ofertas_id
+                LEFT JOIN detalle_busquedas db ON db.busquedas_id = b.id
+                LEFT JOIN modalidades m ON m.id = db.modalidades_id
+                WHERE ppc.candidatos_id = ?
+                ORDER BY p.id DESC';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(array($candidatoId));
+        return $stmt->fetchAll();
     }
 
     private function ofertaActiva(PDO $pdo, $ofertaId)

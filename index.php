@@ -88,6 +88,9 @@ switch ($accion) {
     case 'ofertas_update':
         (new OfertasController())->update();
         break;
+    case 'postulaciones':
+        (new PostulacionesController())->index();
+        break;
     case 'postulaciones_store':
         (new PostulacionesController())->store();
         break;
